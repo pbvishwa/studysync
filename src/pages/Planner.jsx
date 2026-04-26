@@ -36,12 +36,11 @@ export default function Planner() {
     if (!syllabus.trim()) return
     setLoading(true); setError(''); setPlan(null)
     try {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514', max_tokens: 4000,
-          messages: [{ role: 'user', content: `You are a study plan generator for college students.
+      const res = await fetch('/api/generate-plan', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    messages: [{ role: 'user', content: `You are a study plan generator for college students.
 
 Syllabus: ${syllabus}
 Study hours/day: ${hours}
@@ -65,8 +64,8 @@ Return ONLY valid JSON (no markdown, no explanation):
   ]
 }
 Rules: xp_reward=30 easy, 60 medium, 100 hard. Specific actionable tasks. 5-21 days. 2-4 tasks/day.` }]
-        })
-      })
+  })
+})
       const data = await res.json()
       const text = data.content?.[0]?.text || ''
       const match = text.match(/\{[\s\S]*\}/)
